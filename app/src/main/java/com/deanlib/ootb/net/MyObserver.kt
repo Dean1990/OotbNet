@@ -17,7 +17,7 @@ abstract class MyObserver<T> : BaseObserver<T> {
 
     constructor(context: Context):this(context,true)
 
-    constructor(context:Context,showDialog:Boolean){
+    constructor(context:Context,showDialog:Boolean):super("200"){
         mContext = context
         mShowDialog = showDialog
     }

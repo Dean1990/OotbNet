@@ -7,7 +7,7 @@ import io.reactivex.disposables.Disposable
 /**
  * 创建Base抽象类实现Observer
  */
-abstract class BaseObserver<T> : Observer<BaseResponse<T>>{
+abstract class BaseObserver<T>(var successCode:String) : Observer<BaseResponse<T>>{
 
     private val TAG = "BaseObserver"
 
@@ -17,10 +17,10 @@ abstract class BaseObserver<T> : Observer<BaseResponse<T>>{
 
     override fun onNext(t: BaseResponse<T>) {
         //对基础数据进行统一处理
-        if (t.code == 200){
+        if (t.code == successCode){
             onSuccess(t.data)
         }else{
-            onFailure(null,t.message)
+            onFailure(null,t.msg)
         }
     }
 
@@ -33,6 +33,6 @@ abstract class BaseObserver<T> : Observer<BaseResponse<T>>{
         Log.e(TAG,"onComplete")
     }
 
-    abstract fun onSuccess(data:T)
-    abstract fun onFailure(e:Throwable?,errMsg:String)
+    abstract fun onSuccess(data:T?)
+    abstract fun onFailure(e:Throwable?,errMsg:String?)
 }

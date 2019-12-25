@@ -11,11 +11,11 @@ class MainActivity : RxAppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         RequestUtils.getDemo(this,object: MyObserver<List<Demo>>(this){
-            override fun onSuccess(data: List<Demo>) {
+            override fun onSuccess(data: List<Demo>?) {
 
             }
 
-            override fun onFailure(e: Throwable?, errMsg: String) {
+            override fun onFailure(e: Throwable?, errMsg: String?) {
 
             }
 
