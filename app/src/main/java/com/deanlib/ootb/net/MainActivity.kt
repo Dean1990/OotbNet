@@ -10,8 +10,8 @@ class MainActivity : RxAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        RequestUtils.getDemo(this,object: MyObserver<Demo>(this){
-            override fun onSuccess(data: Demo) {
+        RequestUtils.getDemo(this,object: MyObserver<List<Demo>>(this){
+            override fun onSuccess(data: List<Demo>) {
 
             }
 

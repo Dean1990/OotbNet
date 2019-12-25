@@ -11,11 +11,11 @@ import java.util.concurrent.TimeUnit
  */
 class RetrofitUtils {
     companion object{
-        lateinit var mApiUrl:ApiUrl
+        var mApiUrl:ApiUrl? = null
         /**
          * 单例模式
          */
-        fun getApiUrl():ApiUrl{
+        fun getApiUrl(): ApiUrl {
             if (mApiUrl == null){
                 synchronized(RetrofitUtils::class){
                     if (mApiUrl == null){
@@ -23,7 +23,7 @@ class RetrofitUtils {
                     }
                 }
             }
-            return mApiUrl
+            return mApiUrl!!
         }
     }
 

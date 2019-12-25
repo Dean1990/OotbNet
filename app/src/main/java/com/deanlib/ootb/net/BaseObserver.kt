@@ -20,7 +20,7 @@ abstract class BaseObserver<T> : Observer<BaseResponse<T>>{
         if (t.code == 200){
             onSuccess(t.data)
         }else{
-            onFailure(null,t.msg)
+            onFailure(null,t.message)
         }
     }
 
