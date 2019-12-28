@@ -1,6 +1,7 @@
-package com.deanlib.ootb.net
+package com.deanlib.ootb.net.base
 
 import android.util.Log
+import com.deanlib.ootb.net.RxExceptionUtil
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 
@@ -17,16 +18,18 @@ abstract class BaseObserver<T>(var successCode:String) : Observer<BaseResponse<T
 
     override fun onNext(t: BaseResponse<T>) {
         //对基础数据进行统一处理
-        if (t.code == successCode){
-            onSuccess(t.data)
+        if (t.getRealCode() == successCode){
+            onSuccess(t.getRealData())
         }else{
-            onFailure(null,t.msg)
+            onFailure(null,t.getRealMsg())
         }
     }
 
     override fun onError(e: Throwable) {
         Log.e(TAG,"Throwable: ${e.message}")
-        onFailure(e,RxExceptionUtil.exceptionHandler(e))
+        onFailure(e,
+            RxExceptionUtil.exceptionHandler(e)
+        )
     }
 
     override fun onComplete() {

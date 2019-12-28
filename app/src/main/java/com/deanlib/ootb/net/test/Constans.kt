@@ -1,4 +1,4 @@
-package com.deanlib.ootb.net
+package com.deanlib.ootb.net.test
 
 class Constans {
     companion object{

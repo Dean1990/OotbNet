@@ -9,27 +9,29 @@ import java.util.concurrent.TimeUnit
 /**
  * Retrofit封装
  */
-class RetrofitUtils {
+class Net {
     companion object{
-        var mApiUrl:ApiUrl? = null
+        private var apiUrl:Any? = null
+
         /**
          * 单例模式
          */
-        fun getApiUrl(): ApiUrl {
-            if (mApiUrl == null){
-                synchronized(RetrofitUtils::class){
-                    if (mApiUrl == null){
-                        mApiUrl = RetrofitUtils().getRetrofit()
+        fun <T> of(clazz:Class<T>): T {
+            if (apiUrl == null){
+                synchronized(Net::class){
+                    if (apiUrl == null){
+                        apiUrl = Net().getRetrofit(clazz)
                     }
                 }
             }
-            return mApiUrl!!
+            return (apiUrl as T?)!!
         }
+
     }
 
-    fun getRetrofit():ApiUrl{
+    fun <T> getRetrofit(clazz:Class<T>):T{
         //初始化Retrofit
-        var apiUrl = initRetrofit(initOkHttp()).create(ApiUrl::class.java)
+        var apiUrl = initRetrofit(initOkHttp()).create(clazz)
         return apiUrl
     }
 
@@ -39,7 +41,7 @@ class RetrofitUtils {
     private fun initRetrofit(client:OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .client(client)
-            .baseUrl(Constans.BaseUrl)
+            .baseUrl(OotbNet.config.baseUrl)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -50,13 +52,12 @@ class RetrofitUtils {
      */
     private fun initOkHttp():OkHttpClient{
         return OkHttpClient().newBuilder()
-            .readTimeout(Constans.DEFAULT_TIME, TimeUnit.SECONDS)//读取超时
-            .connectTimeout(Constans.DEFAULT_TIME,TimeUnit.SECONDS)//请求超时
-            .writeTimeout(Constans.DEFAULT_TIME,TimeUnit.SECONDS)//写入超时
+            .readTimeout(OotbNet.config.readTimeout, TimeUnit.MILLISECONDS)//读取超时
+            .connectTimeout(OotbNet.config.connectTimeout,TimeUnit.MILLISECONDS)//请求超时
+            .writeTimeout(OotbNet.config.writeTimeout,TimeUnit.MILLISECONDS)//写入超时
             .addInterceptor(LogInterceptor())//日志
             .retryOnConnectionFailure(true)
             .build()
     }
-
 
 }
