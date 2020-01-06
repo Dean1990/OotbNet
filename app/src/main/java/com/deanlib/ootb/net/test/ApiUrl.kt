@@ -1,7 +1,5 @@
 package com.deanlib.ootb.net.test
 
-import com.deanlib.ootb.net.test.Demo
-import com.deanlib.ootb.net.test.MyResponse
 import io.reactivex.Observable
 import retrofit2.http.GET
 
