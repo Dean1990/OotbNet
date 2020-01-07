@@ -1,10 +1,8 @@
 package com.deanlib.ootb.net
 
-import androidx.annotation.MainThread
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.internal.cacheGet
 import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -28,7 +26,7 @@ class Net {
                 synchronized(Net::class) {
                     apiUrl = getApiUrl<T>()
                     if (apiUrl == null) {
-                        apiUrl = Net().getRetrofit(clazz, OotbNet.config)
+                        apiUrl = Net().getRetrofit(clazz, OotbNet.config.netConfig!!)
                     }
                 }
             }
@@ -39,8 +37,8 @@ class Net {
          * 这里不返回单例的
          * 用于用户自定义 Config
          */
-        inline fun <reified T> of(clazz: Class<T>, config: Config): T {
-            return Net().getRetrofit(clazz, config)
+        inline fun <reified T> of(clazz: Class<T>, netConfig: NetConfig): T {
+            return Net().getRetrofit(clazz, netConfig)
         }
 
         inline fun <reified T> getApiUrl(): T? {
@@ -54,23 +52,23 @@ class Net {
 
     }
 
-    fun <T> getRetrofit(clazz: Class<T>, config: Config): T {
+    fun <T> getRetrofit(clazz: Class<T>, netConfig: NetConfig): T {
         //初始化Retrofit
-        var apiUrl = initRetrofit(initOkHttp(config), config).create(clazz)
+        var apiUrl = initRetrofit(initOkHttp(netConfig), netConfig).create(clazz)
         return apiUrl
     }
 
     /**
      * 初始化Retrofit
      */
-    private fun initRetrofit(client: OkHttpClient, config: Config): Retrofit {
+    private fun initRetrofit(client: OkHttpClient, netConfig: NetConfig): Retrofit {
         return Retrofit.Builder()
             .client(client)
-            .baseUrl(config.baseUrl)
+            .baseUrl(netConfig.baseUrl)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactories(config.callAdapterFactories)
-            .addConverterFactories(config.converterFactories)
+            .addCallAdapterFactories(netConfig.callAdapterFactories)
+            .addConverterFactories(netConfig.converterFactories)
             .build()
     }
 
@@ -79,7 +77,7 @@ class Net {
      */
     private fun Retrofit.Builder.addCallAdapterFactories(factories: List<CallAdapter.Factory>?)
             :Retrofit.Builder{
-        factories!!.forEach{
+        factories?.forEach{
             addCallAdapterFactory(it)
         }
         return this
@@ -87,7 +85,7 @@ class Net {
 
     private fun Retrofit.Builder.addConverterFactories(factories: List<Converter.Factory>?)
             :Retrofit.Builder{
-        factories!!.forEach{
+        factories?.forEach{
             addConverterFactory(it)
         }
         return this
@@ -97,15 +95,15 @@ class Net {
     /**
      * 初始化okhttp
      */
-    private fun initOkHttp(config: Config): OkHttpClient {
+    private fun initOkHttp(netConfig: NetConfig): OkHttpClient {
         return OkHttpClient().newBuilder()
-            .readTimeout(config.readTimeout, TimeUnit.MILLISECONDS)//读取超时
-            .connectTimeout(config.connectTimeout, TimeUnit.MILLISECONDS)//请求超时
-            .writeTimeout(config.writeTimeout, TimeUnit.MILLISECONDS)//写入超时
+            .readTimeout(netConfig.readTimeout, TimeUnit.MILLISECONDS)//读取超时
+            .connectTimeout(netConfig.connectTimeout, TimeUnit.MILLISECONDS)//请求超时
+            .writeTimeout(netConfig.writeTimeout, TimeUnit.MILLISECONDS)//写入超时
             .addInterceptor(LogInterceptor())//日志
-            .addInterceptors(config.interceptors)
-            .addNetworkInterceptors(config.networkInterceptors)
-            .retryOnConnectionFailure(config.retryOnConnectionFailure)
+            .addInterceptors(netConfig.interceptors)
+            .addNetworkInterceptors(netConfig.networkInterceptors)
+            .retryOnConnectionFailure(netConfig.retryOnConnectionFailure)
             .build()
     }
 

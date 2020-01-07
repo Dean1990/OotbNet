@@ -10,7 +10,7 @@ class OotbNet {
         var isDebug:Boolean = false
         lateinit var config:Config
 
-        fun init(isDebug:Boolean,config:Config){
+        fun init(isDebug:Boolean, config:Config){
             this.isDebug = isDebug
             this.config = config
         }

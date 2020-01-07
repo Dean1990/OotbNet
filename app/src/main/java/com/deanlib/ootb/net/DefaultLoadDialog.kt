@@ -19,7 +19,7 @@ class DefaultLoadDialog : ILoadDialog {
 
         })
         return AlertDialog.Builder(context)
-            .setView(view).create();
+            .setView(view).create()
     }
 
 }

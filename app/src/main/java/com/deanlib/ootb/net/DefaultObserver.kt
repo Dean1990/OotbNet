@@ -7,6 +7,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.widget.Toast
 import com.deanlib.ootb.net.base.BaseObserver
+import com.deanlib.ootb.net.base.ILoadDialog
 import io.reactivex.disposables.Disposable
 
 /**
@@ -14,16 +15,16 @@ import io.reactivex.disposables.Disposable
  */
 abstract class DefaultObserver<T> : BaseObserver<T> {
 
-    var mShowDialog:Boolean = true
+    var mLoadDialog:ILoadDialog?=null
     var dialog: Dialog? = null
     var mContext:Context?=null
     var d:Disposable?=null
 
-    constructor(context: Context):this(context,true)
+    constructor(context: Context):this(context,OotbNet.config.loadDialog)
 
-    constructor(context:Context,showDialog:Boolean):super("200"){
+    constructor(context:Context,loadDialog: ILoadDialog?):super("200"){
         mContext = context
-        mShowDialog = showDialog
+        mLoadDialog = loadDialog
     }
 
     override fun onSubscribe(d: Disposable) {
@@ -34,10 +35,10 @@ abstract class DefaultObserver<T> : BaseObserver<T> {
                 d.dispose()
             }
         }else {
-            if (dialog == null && mShowDialog == true){
-                dialog = OotbNet.config?.loadDialog?.getDialog(mContext!!)
-                dialog?.show()
+            if (dialog == null && mLoadDialog != null){
+                dialog = mLoadDialog?.getDialog(mContext!!)
             }
+            dialog?.show()
         }
         super.onSubscribe(d)
     }
@@ -60,7 +61,7 @@ abstract class DefaultObserver<T> : BaseObserver<T> {
 
     fun hideDialog(){
         dialog = dialog?.run {
-            if (mShowDialog == true){
+            if (isShowing){
                 dismiss()
             }
             null
